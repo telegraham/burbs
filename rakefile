@@ -55,4 +55,26 @@ task :containers do
   print_recursively(Word.all, :containers)
 end
 
+namespace :halfviz do
 
+  task :full do
+    require_relative 'runner'
+    Word.shared.sort.each do |word|
+      puts "#{ word } { color: #c6531e }"
+      word.burbs.each do |burb|
+        puts "#{ burb } { color: #95cde5 }"
+        puts "#{ burb } -> #{ word }"
+      end
+    end
+  end
+
+
+  task :words do
+    require_relative 'runner'
+    Burb.sharing.sort.each do |burb|
+      puts "; #{ burb }"
+      puts burb.to_edges
+    end
+  end
+
+end

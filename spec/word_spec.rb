@@ -55,6 +55,21 @@ describe Word do
       expect(Word.all.length).to be(1)
       expect(Word.all.last).to be(@oak_title)
     end
+
+    it "raises an exception only when the syllable splits don't match a cached word" do
+      Word.new("Ha•zel")
+      expect { Word.new("Ha•zel") }.not_to raise_error
+      expect { Word.new("Hazel") }.to raise_exception(ArgumentError, /syllable/i)
+      
+      Word.new("River")
+      expect { Word.new("River") }.not_to raise_error
+      expect { Word.new("Ri•ver") }.to raise_exception(ArgumentError, /syllable/i)
+
+      Word.new("Fo•rest")
+      expect { Word.new("Fo•rest") }.not_to raise_error
+      expect { Word.new("Fo•Rest") }.not_to raise_error
+      expect { Word.new("For•est") }.to raise_exception(ArgumentError, /syllable/i)
+    end
     
   end
 
@@ -155,6 +170,23 @@ describe Word do
       expect(@country.appearances_in_lexicon).to be(2)
       expect(@countryside.appearances_in_lexicon).to be(1)
     end
+  end
+
+  describe "#has_burbs_besides?" do
+
+    before do
+      @oak = Burb.new("Oak Park")
+      @forest = Burb.new("Forest Park")
+    end
+
+    it "returns false if the word belongs to only the burb passed in" do
+      expect(Word.new("Oak").has_burbs_besides? @oak).to be(false)
+    end
+
+    it "returns true if the word belongs to a burb besides the argument" do
+      expect(Word.new("Park").has_burbs_besides? @forest).to be(true)
+    end
+
   end
 
 end

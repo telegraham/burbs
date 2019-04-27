@@ -15,7 +15,7 @@ class Burb < String
 
     ALL[name] = self
   end
-
+  
   def words
     embedded_words + discrete_words
   end
@@ -38,6 +38,31 @@ class Burb < String
 
   def self.last
     all.last
+  end
+
+  def uses_shared_word?
+    words.any? do |word|
+      word.has_burbs_besides? self
+    end
+  end
+
+  def self.sharing
+    all.select do |burb|
+      burb.uses_shared_word?
+    end
+  end
+
+  def to_edges
+    # binding.pry
+    words = self.words
+    words_count = words.count
+    edges = []
+    words.each_with_index do |word, index|
+      if index < words_count - 1
+        edges << "#{ word } -> #{ words[index + 1] }"
+      end
+    end
+    edges
   end
 
   private

@@ -8,6 +8,10 @@ class Word < String
   def self.new(text)
     downcased = text.downcase
     new_one = super(downcased)
+    cached = ALL[new_one]
+    if cached && new_one.syllables != cached.syllables
+      raise ArgumentError.new("Syllable splits must match cached!") 
+    end
     ALL[new_one] ||= new_one
   end
 
@@ -94,6 +98,12 @@ class Word < String
   def containers
     Word.all.select do |word|
       self != word && word.include?(self)
+    end
+  end
+
+  def has_burbs_besides?(burb_arg)
+    burbs.any? do |burb|
+      burb != burb_arg
     end
   end
 
