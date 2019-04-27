@@ -1,0 +1,58 @@
+require_relative 'environment'
+
+desc "console with the environment loaded"
+task :console do
+  Pry.start
+end
+
+desc "list words and their containing suburbs"
+task :list do
+  require_relative 'runner'
+  puts ""
+  Word.shared.sort.each do |word|
+    puts word.to_s.titleize.yellow
+    puts "  " + word.burbs.sort.map(&:to_s).map(&:blue).join("\r\n  ")
+    puts ""
+  end
+end
+
+desc "list possible words"
+task :possible do
+  require_relative 'runner'
+  puts ""
+  Word.possible_words_from_syllables.to_a.sort_by do |arr|
+    arr.last.length * -1
+  end.each do |arr|
+    word = arr.first
+    usages = arr.last
+    puts word.to_s.yellow
+    puts "  " + usages.sort.map(&:to_s).map(&:blue).join("\r\n  ")
+    puts ""
+  end
+end
+
+desc "load suburbs and pry"
+task :load do
+  require_relative 'runner'
+  Pry.start
+end
+
+def print_recursively(words, method, tab_depth=0)
+  words.each do |word|
+    puts ("   " * tab_depth) + word.to_s.send(String.colors[tab_depth + 1])
+    embedded = word.send(method)
+    print_recursively(embedded, method, tab_depth + 1) if embedded.length > 0
+  end
+end
+
+task :embedded do
+  require_relative 'runner'
+  print_recursively(Word.all, :embedded)
+end
+
+task :containers do
+  require_relative 'runner'
+  print_recursively(Word.all, :containers)
+end
+
+
