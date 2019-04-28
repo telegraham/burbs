@@ -57,6 +57,7 @@ end
 
 namespace :halfviz do
 
+  desc "halfviz: words and burbs are nodes"
   task :full do
     require_relative 'runner'
     Word.shared.sort.each do |word|
@@ -68,13 +69,22 @@ namespace :halfviz do
     end
   end
 
-
+  desc "halfviz: words are nodes and burbs are edges"
   task :words do
     require_relative 'runner'
     Burb.sharing.sort.each do |burb|
       puts "; #{ burb }"
       puts burb.to_edges
     end
+  end
+
+  desc "halfviz: burbs are nodes and words are edges"
+  task :burbs do
+    require_relative 'runner'
+    # Word.shared.sort.each do |word|
+    #   puts "; #{ burb }"
+    #   puts burb.to_edges
+    # end
   end
 
 end

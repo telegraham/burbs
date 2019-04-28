@@ -91,13 +91,13 @@ class Word < String
 
   def embedded
     Word.all.select do |word|
-      self != word && self.include?(word)
+      self != word && self.include_syllables?(word)
     end
   end
 
   def containers
     Word.all.select do |word|
-      self != word && word.include?(self)
+      self != word && word.include_syllables?(self)
     end
   end
 
@@ -130,6 +130,14 @@ class Word < String
         accumulator << remainder
       end
       accumulator
+    end
+  end
+
+  def include_syllables? word
+    (1...syllables.length).any? do |at_a_time|
+      syllables.each_cons(at_a_time).any? do |group|
+        group.map(&:to_s).join.downcase == word.downcase
+      end
     end
   end
 

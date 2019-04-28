@@ -74,16 +74,30 @@ describe Word do
   end
 
   describe "#embedded" do
-    it "returns any previously-appearing words that are embedded in this word" do
-      ridgewood = Word.new("Ridgewood")
+    it "returns any previously-appearing words that are embedded in this word as syllables" do
+      ridgewood = Word.new("Ridge•wood")
       wood = Word.new("Wood")
       expect(ridgewood.embedded).to eq([ wood ])
+    end
+
+    it "returns any previously-appearing words composed of multiple syllables" do
+      riverside = Word.new("Ri•ver•side")
+      river = Word.new("Ri•ver")
+      expect(riverside.embedded).to eq([ river ])
+    end
+
+    it "ignores words that don't split on syllable boundaries" do
+      Word.new("Des")
+      plaines = Word.new("Plaines")
+      Word.new("La")
+      Word.new("Grange")
+      expect(plaines.embedded).to eq([]) #not [ "la" ]
     end
   end
 
   describe "#embedded" do
     it "returns any previously-appearing words that are embedded in this word" do
-      ridgewood = Word.new("Ridgewood")
+      ridgewood = Word.new("Ridge•wood")
       wood = Word.new("Wood")
       expect(wood.containers).to eq([ ridgewood ])
     end
@@ -94,7 +108,7 @@ describe Word do
     before do
       @op = Burb.new("Oak Park")
       @ol = Burb.new("Oak Lawn")
-      @norridge = Burb.new("Norridge")
+      @norridge = Burb.new("Nor•ridge")
       @park_ridge = Burb.new("Park Ridge") #this is a good order, because this way the word ridge is created after the word norridge
     end
 
@@ -196,7 +210,7 @@ describe Word do
       @oak_park = Burb.new("Oak Park")
       @forest_park = Burb.new("Forest Park")
       @river_forest = Burb.new("River Forest")
-      @riverside = Burb.new("Riverside")
+      @riverside = Burb.new("River•side")
     end
 
     it "returns the number of burbs which use this word" do
@@ -219,7 +233,7 @@ describe Word do
   describe "used_more_than_embedded?" do
 
     before do
-      Burb.new("Riv•er Forest")
+      Burb.new("Riv•er For•est")
       Burb.new("Riv•er•side")
       Burb.new("North Riv•er•side")
       Burb.new("North•brook")
@@ -247,7 +261,7 @@ describe Word do
 
   describe "#decompose" do
     before(:each) do
-      @riverside = Word.new("Riverside")
+      @riverside = Word.new("Riv•er•side")
     end
 
     after(:each) do
@@ -255,8 +269,8 @@ describe Word do
     end
 
     it "returns an array of strings with a left edge embed" do
-      Word.new("River")
-      expect(@riverside.decompose).to eq([ Word.new("River"), "side" ])
+      Word.new("Riv•er")
+      expect(@riverside.decompose).to eq([ Word.new("Riv•er"), "side" ])
     end
 
     it "returns an array of strings with a right edge embed" do
@@ -265,21 +279,21 @@ describe Word do
     end
 
     it "returns an array of strings with all embeds" do
-      Word.new("River")
+      Word.new("Riv•er")
       Word.new("Side")
-      expect(@riverside.decompose).to eq([ Word.new("river"), Word.new("side") ])
+      expect(@riverside.decompose).to eq([ Word.new("riv•er"), Word.new("side") ])
     end
     
     it "returns an array of strings with a middle embed" do
-      @riverside = Word.new("Riverside")
+      @riverside = Word.new("Di•vers•i•ty")
       Word.new("vers")
-      expect(@riverside.decompose).to eq([ "ri", Word.new("vers"), "ide" ])
+      expect(@riverside.decompose).to eq([ "di", Word.new("vers"), "ity" ])
     end
     it "returns an array of strings with complex embeddings" do
-      @riverside = Word.new("Riverside")
+      @riverside = Word.new("Di•ve•rsi•ty")
       Word.new("ve")
-      Word.new("de")
-      expect(@riverside.decompose).to eq([ "ri", Word.new("ve"), "rsi", Word.new("de") ])
+      Word.new("ty")
+      expect(@riverside.decompose).to eq([ "di", Word.new("ve"), "rsi", Word.new("ty") ])
     end
   end
 
