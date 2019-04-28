@@ -335,6 +335,9 @@ describe Word do
 
     it "returns false when the parameter does not match" do
       expect(@regulate.include_syllables? "toad").to be(false)
+      expect(@regulate.include_syllables? "frog").to be(false)
+      expect(@regulate.include_syllables? "potato").to be(false)
+      expect(@regulate.include_syllables? "banana").to be(false)
     end
   end
 
