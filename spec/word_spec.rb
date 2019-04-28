@@ -189,4 +189,98 @@ describe Word do
 
   end
 
+
+  describe "uses" do
+
+    before do
+      @oak_park = Burb.new("Oak Park")
+      @forest_park = Burb.new("Forest Park")
+      @river_forest = Burb.new("River Forest")
+      @riverside = Burb.new("Riverside")
+    end
+
+    it "returns the number of burbs which use this word" do
+      expect(Word.new("Oak").uses).to eq(1)
+      expect(Word.new("Forest").uses).to eq(2)
+      expect(Word.new("Park").uses).to eq(2)
+    end
+
+    it "returns the number of burbs which use this word as a fragment" do
+      expect(Word.new("River").uses).to eq(2)
+    end
+
+    # this shouldn't work
+    # it "returns the number of usages for a remainder word" do
+    #   expect(Word.new("Side").uses).to eq(1)
+    # end
+
+  end
+
+  describe "used_more_than_embedded?" do
+
+    before do
+      Burb.new("Riv•er Forest")
+      Burb.new("Riv•er•side")
+      Burb.new("North Riv•er•side")
+      Burb.new("North•brook")
+      Burb.new("North•field")
+      Burb.new("North•lake")
+    end
+
+    it "returns false if the word is used less often than the sum of its embedded words' usages" do
+      expect(Word.new("North•lake").used_more_than_embedded?).to be(false)
+    end
+
+    it "returns false if the word is as often as the sum of its embedded words' usages" do
+
+    end
+
+    it "returns true if the word has no embedded words" do
+      expect(Word.new("North").used_more_than_embedded?).to be(true)
+    end
+
+    it "returns true if the word is used more often than the sum of its embedded words" do
+      expect(Word.new("Riv•er•side").used_more_than_embedded?).to be(true)
+    end
+
+  end
+
+  describe "#decompose" do
+    before(:each) do
+      @riverside = Word.new("Riverside")
+    end
+
+    after(:each) do
+      Word.clear_all
+    end
+
+    it "returns an array of strings with a left edge embed" do
+      Word.new("River")
+      expect(@riverside.decompose).to eq([ Word.new("River"), "side" ])
+    end
+
+    it "returns an array of strings with a right edge embed" do
+      Word.new("Side")
+      expect(@riverside.decompose).to eq([ "river", Word.new("side") ])
+    end
+
+    it "returns an array of strings with all embeds" do
+      Word.new("River")
+      Word.new("Side")
+      expect(@riverside.decompose).to eq([ Word.new("river"), Word.new("side") ])
+    end
+    
+    it "returns an array of strings with a middle embed" do
+      @riverside = Word.new("Riverside")
+      Word.new("vers")
+      expect(@riverside.decompose).to eq([ "ri", Word.new("vers"), "ide" ])
+    end
+    it "returns an array of strings with complex embeddings" do
+      @riverside = Word.new("Riverside")
+      Word.new("ve")
+      Word.new("de")
+      expect(@riverside.decompose).to eq([ "ri", Word.new("ve"), "rsi", Word.new("de") ])
+    end
+  end
+
 end

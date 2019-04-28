@@ -54,18 +54,32 @@ class Burb < String
 
   def to_edges
     # binding.pry
-    words = self.words
-    words_count = words.count
-    edges = []
-    words.each_with_index do |word, index|
-      if index < words_count - 1
-        edges << "#{ word } -> #{ words[index + 1] }"
-      end
+    # words = self.words
+    # words_count = words.count
+    # edges = []
+    # words.each_with_index do |word, index|
+    #   if index < words_count - 1
+    #     edges << "#{ word } -> #{ words[index + 1] }"
+    #   end
+    # end
+    # edges
+    constituent_words.each_cons(2).map do |word, next_word|
+      "#{ word } -> #{ next_word }"
     end
-    edges
   end
 
   private
+
+  def constituent_words
+    constituents = discrete_words.map do |discrete_word|
+      if discrete_word.used_more_than_embedded?
+        discrete_word
+      else
+        discrete_word.decompose
+      end
+    end
+    constituents.flatten
+  end
 
   def embedded_words
     discrete_words.map(&:embedded).flatten

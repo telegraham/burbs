@@ -107,6 +107,32 @@ class Word < String
     end
   end
 
+  def uses
+    burbs.count
+  end
+
+  def used_more_than_embedded?
+    uses > (embedded.map(&:uses).sum - uses) #maybe mean?
+  end
+
+  def decompose
+    embedded.sort_by do |embed|
+      self.index embed
+    end.reduce([self.to_s]) do |accumulator, embed|
+      remainder = accumulator.pop
+      embed_index = remainder.index embed
+      unless embed_index == 0
+        accumulator << remainder[0...embed_index] # push non-word chunk on
+      end
+      accumulator << embed #push the embed on
+      remainder = remainder[(embed_index + embed.length)...remainder.length]
+      if remainder.length > 0
+        accumulator << remainder
+      end
+      accumulator
+    end
+  end
+
   private
 
   def burbs_from_containing_words
