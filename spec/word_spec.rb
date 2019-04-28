@@ -95,7 +95,7 @@ describe Word do
     end
   end
 
-  describe "#embedded" do
+  describe "#containers" do
     it "returns any previously-appearing words that are embedded in this word" do
       ridgewood = Word.new("Ridge•wood")
       wood = Word.new("Wood")
@@ -344,7 +344,9 @@ describe Word do
   describe "#remainders" do
 
     it "returns chunks of larger words that are left by removing smaller words" do
-      pending
+      Word.new("Ridge•wood")
+      Word.new("wood")
+      expect(Word.remainders).to eq([ "ridge" ])
     end
 
   end
@@ -352,7 +354,11 @@ describe Word do
   describe ".promote_remainders" do
 
     it "makes remainders into proper words" do
-      pending
+      Word.new("Ridge•wood")
+      Word.new("wood")
+      expect(Word.promote_remainders).to eq([ "ridge" ])
+      expect(Word.remainders).to eq([ ])
+      expect(Word.all).to eq([ "ridgewood", "wood", "ridge" ])
     end
 
   end
