@@ -20,13 +20,28 @@ desc "list possible words"
 task :possible do
   require_relative 'runner'
   puts ""
-  Word.possible_words_from_syllables.to_a.sort_by do |arr|
+  possible = Word.possible_words_from_syllables.to_a
+  remainders = Word.remainders
+  Word.promote_remainders
+  second_remainders = Word.remainders
+  Word.promote_remainders
+  third_remainders = Word.remainders
+  possible.sort_by do |arr|
     arr.last.length * -1
   end.each do |arr|
     word = arr.first
     usages = arr.last
-    puts word.to_s.yellow
-    puts "  " + usages.sort.map(&:to_s).map(&:blue).join("\r\n  ")
+    if remainders.include?(word.to_s)
+      color = :green
+    elsif second_remainders.include?(word.to_s)
+      color = :yellow
+    elsif third_remainders.include?(word.to_s)
+      color = :magenta
+    else
+      color = :red
+    end
+    puts word.to_s.send(color)
+    puts "  " + usages.sort.map(&:to_s).map(&:light_black).join("\r\n  ")
     puts ""
   end
 end
@@ -72,6 +87,7 @@ namespace :halfviz do
   desc "halfviz: words are nodes and burbs are edges"
   task :words do
     require_relative 'runner'
+    Word.promote_remainders
     Burb.sharing.sort.each do |burb|
       puts "; #{ burb }"
       puts burb.to_edges

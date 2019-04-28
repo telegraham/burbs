@@ -141,6 +141,18 @@ class Word < String
     end
   end
 
+  def self.remainders
+    Word.all.map(&:decompose).flatten.reject do |fragment|
+      Word.all.include? fragment
+    end
+  end
+
+  def self.promote_remainders
+    self.remainders.map do |remainder|
+      Word.new remainder
+    end
+  end
+
   private
 
   def burbs_from_containing_words
