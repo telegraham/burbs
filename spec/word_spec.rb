@@ -297,4 +297,45 @@ describe Word do
     end
   end
 
+  describe "#include_syllables?" do
+    before do
+      @regulate = Word.new("Reg•u•late")
+      @regulated = Word.new("Reg•u•lat•ed")
+    end
+    it "returns true when the parameter matches one syllable" do
+      expect(@regulate.include_syllables? "late").to be(true)
+      expect(@regulate.include_syllables? "Late").to be(true)
+    end
+
+    it "returns true when the parameter matches two consecutive syllables" do
+      expect(@regulate.include_syllables? "regu").to be(true)
+      expect(@regulate.include_syllables? "Regu").to be(true)
+    end
+
+    it "returns false when the parameter matches two non-consecutive syllables" do
+      expect(@regulate.include_syllables? "reglate").to be(false)
+    end
+
+    it "returns true when the parameter matches three syllables" do
+      expect(@regulated.include_syllables? "regulat").to be(true)
+      expect(@regulated.include_syllables? "Regulat").to be(true)
+    end
+
+    it "returns false when the parameter matches the whole word" do
+      expect(@regulated.include_syllables? "regulated").to be(true)
+      expect(@regulated.include_syllables? "Regulated").to be(true)
+    end
+
+    it "returns false when the parameter matches the word but not at a syllable boundary" do
+      expect(@regulate.include_syllables? "gula").to be(false)
+      expect(@regulate.include_syllables? "egula").to be(false)
+      expect(@regulate.include_syllables? "ulat").to be(false)
+      expect(@regulate.include_syllables? "regul").to be(false)
+    end
+
+    it "returns false when the parameter does not match" do
+      expect(@regulate.include_syllables? "toad").to be(false)
+    end
+  end
+
 end

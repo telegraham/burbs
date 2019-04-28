@@ -134,7 +134,7 @@ class Word < String
   end
 
   def include_syllables? word
-    (1...syllables.length).any? do |at_a_time|
+    (1..syllables.length).any? do |at_a_time|
       syllables.each_cons(at_a_time).any? do |group|
         group.map(&:to_s).join.downcase == word.downcase
       end
