@@ -341,4 +341,20 @@ describe Word do
     end
   end
 
+  describe "#remainders" do
+
+    it "returns chunks of larger words that are left by removing smaller words" do
+      pending
+    end
+
+  end
+
+  describe ".promote_remainders" do
+
+    it "makes remainders into proper words" do
+      pending
+    end
+
+  end
+
 end
